@@ -5,48 +5,64 @@ import {
     Input,
     HStack,
     Button,
-    Grid,
-} from '@chakra-ui/react';
-import * as React from 'react';
-import * as cardlist from './Standard.json';
+    SimpleGrid,
+} from '@chakra-ui/react'
+import * as React from 'react'
+import { CardView } from './data_views/CardView'
+import * as cardlist from './Standard.json'
+import { Card, CardList } from './CardModels'
 
-interface CardList {
-    default: {
-        data: {
-            [setName: string]: {
-                baseSetSize: number;
-            };
-        };
-    };
-}
 
 export function CardSearchPage() {
-    const [searchString, setSearchString] = React.useState<
-        string | undefined
-    >();
+    const [searchString, setSearchString] = React.useState<string | undefined>()
+    const [cardNameDict, setCardNameDict] = React.useState(new Map<string, number>())
+    const [cardsDict, setCardsDict] = React.useState(new Map<string, Card>())
 
-    const handleChange = (event: any) => setSearchString(event.target.value);
+    var loaded = false
+
+    const handleChange = (event: any) => setSearchString(event.target.value)
 
     React.useEffect(() => {
-        console.log(`searchString: ${searchString}`);
-    });
+        console.log(`searchString: ${searchString}`)
 
-    function search() {
-        let listOfAllCards = cardlist as CardList;
+        if (!loaded) {
+            loadAllCards()
+        }
+    })
 
-        let eldSetSize = listOfAllCards.default.data['ELD'].baseSetSize;
-        let kldSetSize = listOfAllCards.default.data['KHM'].baseSetSize;
-        // let SetSize = listOfAllCards.default.data['KLD'].baseSetSize;
-        console.log(
-            `searching for: ${searchString} in ${eldSetSize}, ${kldSetSize}`
-        );
+    function loadAllCards() {
+
+        let listOfAllCards = cardlist as CardList
+
+        let kldSetCards = listOfAllCards.default.data['KHM'].cards
+
+        kldSetCards.map((card) => {
+            cardNameDict.set(card.name, 1)
+            cardsDict.set(card.name, card)
+        })
+
+        setCardNameDict(cardNameDict)
+        setCardsDict(cardsDict)
+        loaded = true
     }
 
-    function grabCockatriceXml() {}
+    function viewsForCardNames() {
+        var objs = new Array()
 
-    function parseCockatriceDom() {}
+        cardNameDict.forEach((value, key) => {
+            if (searchString !== undefined && searchString !== "") {
+                if (key.toLowerCase().includes(searchString)) {
+                    let card = cardsDict.get(key)
+                    if (card) {
+                        objs.push(<CardView card={card} />)
+                    }
+                }
+            }
+        })
 
-    // TODO: art can be grabbed at https://api.scryfall.com/cards/${card.identifiers.scryfallId}?format=image
+        console.log(`viewsForCardNames() returning ${objs.length} of ${cardsDict.size}`)
+        return objs
+    }
 
     return (
         <VStack bgColor="gray.700">
@@ -56,15 +72,14 @@ export function CardSearchPage() {
                 <HStack>
                     <Input
                         placeholder="Enter a card name..."
-                        value={searchString}
                         onChange={handleChange}
                     />
-                    <Button onClick={search}>Search</Button>
+                    <Button>Search</Button>
                 </HStack>
             </Box>
-            <Grid bgColor="gray.500" w="100%" p={4} m={4}>
-                Cards go here
-            </Grid>
+            <SimpleGrid bgColor="gray.500" w="100%" p={4} m={4} columns={5}>
+                {viewsForCardNames()}
+            </SimpleGrid>
         </VStack>
-    );
+    )
 }
