@@ -21,7 +21,7 @@ export function CardView(props: CardViewProps) {
     function cardColorsToBackgroundColor() {
         let colors = props.card.colors
 
-        if (colors.length == 0) {
+        if (colors.length === 0) {
             return "gray.300"
         }
 

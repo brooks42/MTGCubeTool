@@ -7,10 +7,12 @@ import {
     Button,
     SimpleGrid,
 } from '@chakra-ui/react'
+import * as Utils from './Utils'
 import * as React from 'react'
 import { CardView } from './data_views/CardView'
 import * as cardlist from './Standard.json'
 import { Card, CardList } from './CardModels'
+import { Bar } from 'react-chartjs-2'
 
 
 export function CardSearchPage() {
@@ -54,7 +56,7 @@ export function CardSearchPage() {
                 if (key.toLowerCase().includes(searchString)) {
                     let card = cardsDict.get(key)
                     if (card) {
-                        objs.push(<CardView card={card} />)
+                        objs.push(<CardView card={card} key={card.name} />)
                     }
                 }
             }
@@ -77,9 +79,37 @@ export function CardSearchPage() {
                     <Button>Search</Button>
                 </HStack>
             </Box>
+            <ExampleChart />
             <SimpleGrid bgColor="gray.500" w="100%" p={4} m={4} columns={5}>
                 {viewsForCardNames()}
             </SimpleGrid>
         </VStack>
+    )
+}
+
+function ExampleChart() {
+
+    const labels = ['W', 'U', 'B', 'R', 'G']
+    const data = {
+        type: 'bar',
+        labels: labels,
+        datasets: [
+            {
+                label: 'Dataset 1',
+                data: [1, 3, 5],
+                borderColor: Utils.CHART_COLORS.yellow,
+                backgroundColor: Utils.CHART_COLORS.yellow,
+            },
+            {
+                label: 'Dataset 2',
+                data: [1, 2, 3],
+                borderColor: Utils.CHART_COLORS.blue,
+                backgroundColor: Utils.CHART_COLORS.blue,
+            }
+        ]
+    }
+
+    return (
+        <Bar data={data} type='line' />
     )
 }
