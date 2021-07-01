@@ -4,14 +4,14 @@ import {
   theme,
 } from "@chakra-ui/react"
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
-import { CardSearchPage } from "./CardSearchPage"
+import { MainPage } from "./MainPage"
 
 export const App = () => (
   <ChakraProvider theme={theme}>
-      <BrowserRouter>
-        <Switch>
-          <Route path='/' exact component={CardSearchPage} />
-        </Switch>
-      </BrowserRouter>
+    <BrowserRouter>
+      <Switch>
+        <Route path='/' exact component={MainPage} />
+      </Switch>
+    </BrowserRouter>
   </ChakraProvider>
 )

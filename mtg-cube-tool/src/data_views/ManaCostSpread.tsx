@@ -1,4 +1,4 @@
-import { AspectRatio } from '@chakra-ui/layout'
+import { Box } from '@chakra-ui/layout'
 import { Card, CardColor, CardColorHexes } from '../CardModels'
 import { Bar } from 'react-chartjs-2'
 import * as React from 'react'
@@ -33,8 +33,8 @@ export function ManaCostSpread({ cardList }: ManaCostSpreadProps) {
     }
 
     return (
-        <AspectRatio width="50%" ratio={1 / 3}>
+        <Box width="50%">
             <Bar data={data} type='line' />
-        </AspectRatio>
+        </Box>
     )
 }
