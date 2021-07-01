@@ -13,6 +13,7 @@ import { CardView } from './data_views/CardView'
 import * as cardlist from './Standard.json'
 import { Card, CardList } from './CardModels'
 import { Bar } from 'react-chartjs-2'
+import { ManaCostSpread } from './data_views/ManaCostSpread'
 
 
 export function CardSearchPage() {
@@ -51,7 +52,7 @@ export function CardSearchPage() {
     function viewsForCardNames() {
         var objs = new Array()
 
-        cardNameDict.forEach((value, key) => {
+        cardNameDict.forEach((_, key) => {
             if (searchString !== undefined && searchString !== "") {
                 if (key.toLowerCase().includes(searchString)) {
                     let card = cardsDict.get(key)
@@ -63,6 +64,24 @@ export function CardSearchPage() {
         })
 
         console.log(`viewsForCardNames() returning ${objs.length} of ${cardsDict.size}`)
+        return objs
+    }
+
+    function currentlySelectedCards() {
+
+        var objs = new Array()
+
+        cardNameDict.forEach((_, key) => {
+            if (searchString !== undefined && searchString !== "") {
+                if (key.toLowerCase().includes(searchString)) {
+                    let card = cardsDict.get(key)
+                    if (card) {
+                        objs.push(card)
+                    }
+                }
+            }
+        })
+
         return objs
     }
 
@@ -79,37 +98,10 @@ export function CardSearchPage() {
                     <Button>Search</Button>
                 </HStack>
             </Box>
-            <ExampleChart />
+            <ManaCostSpread cardList={currentlySelectedCards()} />
             <SimpleGrid bgColor="gray.500" w="100%" p={4} m={4} columns={5}>
                 {viewsForCardNames()}
             </SimpleGrid>
         </VStack>
-    )
-}
-
-function ExampleChart() {
-
-    const labels = ['W', 'U', 'B', 'R', 'G']
-    const data = {
-        type: 'bar',
-        labels: labels,
-        datasets: [
-            {
-                label: 'Dataset 1',
-                data: [1, 3, 5],
-                borderColor: Utils.CHART_COLORS.yellow,
-                backgroundColor: Utils.CHART_COLORS.yellow,
-            },
-            {
-                label: 'Dataset 2',
-                data: [1, 2, 3],
-                borderColor: Utils.CHART_COLORS.blue,
-                backgroundColor: Utils.CHART_COLORS.blue,
-            }
-        ]
-    }
-
-    return (
-        <Bar data={data} type='line' />
     )
 }
