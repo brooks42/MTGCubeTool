@@ -7,12 +7,10 @@ import {
     Button,
     SimpleGrid,
 } from '@chakra-ui/react'
-import * as Utils from './Utils'
 import * as React from 'react'
 import { CardView } from './data_views/CardView'
 import * as cardlist from './Standard.json'
 import { Card, CardList } from './CardModels'
-import { Bar } from 'react-chartjs-2'
 import { ManaCostSpread } from './data_views/ManaCostSpread'
 
 
