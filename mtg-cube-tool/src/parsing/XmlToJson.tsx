@@ -1,13 +1,7 @@
 import * as XmlParser from 'fast-xml-parser'
-import { CardList } from '../CardModels'
+import { Card, CardList, CockatriceCardDatabase, CockatriceV1Card, v1CardToInternalCard } from '../CardModels'
 import {
-    VStack,
-    Box,
-    Text,
-    Input,
-    HStack,
-    Button,
-    SimpleGrid,
+    Input
 } from '@chakra-ui/react'
 import * as React from 'react'
 
@@ -19,16 +13,51 @@ export function xmlToCardList(xml: string): CardList | undefined {
         parseAttributeValue: true,
     })
 
-    console.log(JSON.stringify(jsonObject))
+    // console.log(JSON.stringify(jsonObject))
     return jsonObjectToCardList(jsonObject)
 }
 
 function jsonObjectToCardList(jsonObject: any): CardList | undefined {
     console.log('loading CardList from json object')
 
+    const v1Db = tryParsingV1CockatriceDBFileToCardList(jsonObject)
 
+    if (v1Db) {
+        console.log('found a v1 DB, returning it')
+        return v1Db
+    }
 
+    console.log('could not infer type of DB, returning empty-handed')
     return undefined
+}
+
+function tryParsingV1CockatriceDBFileToCardList(jsonObject: any): CardList | undefined {
+
+    const cockatriceDb = jsonObject as CockatriceCardDatabase
+
+    console.log(`cast cockatriceDb: ${JSON.stringify(cockatriceDb)}`)
+
+    if (cockatriceDb === undefined) {
+        return undefined
+    }
+
+    const cardList = {
+        default: {
+            data: {
+                [cockatriceDb.cockatrice_carddatabase.sets.set.name]: {
+                    cards: Array<Card>()
+                }
+            }
+        }
+    }
+
+    cockatriceDb.cockatrice_carddatabase.cards.card.forEach((v1Card) => {
+        cardList.default.data[cockatriceDb.cockatrice_carddatabase.sets.set.name].cards.push(v1CardToInternalCard(v1Card))
+    })
+
+    console.log(`cast cockatriceDb: ${JSON.stringify(cockatriceDb)}`)
+
+    return cardList
 }
 
 export interface LoadSetButtonProps {

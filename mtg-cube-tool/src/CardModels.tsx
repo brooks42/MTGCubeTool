@@ -69,21 +69,97 @@ export interface CardList {
     }
 }
 
+export interface CardSet {
+    name: string
+    longname: string
+}
+
 // v1 cockatrice card database (no props)
 export interface CockatriceCardDatabase {
-    sets: {
-
-    },
-    cards: {
-        card: {
-            name: string
-            // set: string
-            color: string
-            manacost: string
-            type: string
-            pt: string
-            side: DFCSide
-            text: string
+    cockatrice_carddatabase: {
+        sets: {
+            set: CardSet
+        },
+        cards: {
+            card: CockatriceV1Card[]
         }
     }
+}
+
+export interface CockatriceV1Card {
+
+    name: string
+    set: string
+    color: string
+    manacost: string
+    type: string
+    pt: string | undefined
+    side: DFCSide
+    text: string
+}
+
+// returns a `Card` object from the passed v1 card 
+export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
+
+    // examples (TODO: unit tests haha)
+    // Instant should return [Instant]
+    // Tribal Instant - Goblin should return [Tribal, Instant]
+    // Pokémon - Grass Poison should return [Pokémon]
+    function parseSupertypes(v1cardtype: string): string[] {
+
+        const typeSplit = v1cardtype.split(' - ')
+
+        if (typeSplit.length > 0) {
+            return typeSplit[0].split(' ')
+        }
+        return ['none']
+    }
+
+    // examples (TODO: unit tests haha)
+    // Instant should return [none]
+    // Tribal Instant - Goblin should return [Goblin]
+    // Pokémon - Grass Poison should return [Grass, Poison]
+    function parseSubtypes(v1cardtype: string): string[] {
+
+        const typeSplit = v1cardtype.split(' - ')
+
+        if (typeSplit.length > 1) {
+            return typeSplit[1].split(' ')
+        }
+        return ['none']
+    }
+
+    // no clue how to do this yet
+    function parseRarity(set: string): Rarity {
+        return 'common'
+    }
+
+    function parsePower(pt: string | undefined) {
+        return pt !== undefined ? pt.split('/')[0] : ''
+    }
+
+    function parseToughness(pt: string | undefined) {
+        return pt !== undefined ? pt.split('/')[1] : ''
+    }
+
+    const card: Card = {
+        name: v1Card.name,
+        colorIdentity: v1Card.color.split(''),
+        manaCost: v1Card.manacost,
+        text: v1Card.text,
+        type: v1Card.type,
+        supertypes: parseSupertypes(v1Card.type),
+        types: parseSubtypes(v1Card.type),
+        colors: v1Card.color.split(''),
+        rarity: parseRarity(v1Card.set),
+        power: parsePower(v1Card.pt ?? ''),
+        toughness: parseToughness(v1Card.pt ?? ''),
+        identifiers: {
+            scryfallId: '',
+            scryfallIllustrationId: '',
+            scryfallOracleId: ''
+        }
+    }
+
+    return card
 }
