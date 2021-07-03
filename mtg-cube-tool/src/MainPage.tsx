@@ -8,6 +8,7 @@ import {
 import { CardSearchPage } from './CardSearchPage'
 import * as React from 'react'
 import { ComparisonView } from './data_views/ComparisonView'
+import { SetDatasView } from './SetDataView'
 
 
 export function MainPage() {
@@ -23,7 +24,7 @@ export function MainPage() {
                 <CardSearchPage />
             </TabPanel>
             <TabPanel>
-                <p>two!</p>
+                <SetDatasView />
             </TabPanel>
             <TabPanel>
                 <p><ComparisonView /></p>
