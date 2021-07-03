@@ -17,12 +17,6 @@ interface SearchTerms {
 
 }
 
-interface SetList {
-    [set: string]: {
-        cards: Card[]
-    }
-}
-
 export function ComparisonView() {
     const [leftCardList, setLeftCardList] = React.useState<CardList | undefined>()
     const [rightCardList, setRightCardList] = React.useState<CardList | undefined>()

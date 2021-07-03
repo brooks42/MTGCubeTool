@@ -2,7 +2,6 @@ import { Box } from '@chakra-ui/layout'
 import { Card, CardColor, CardColorHexes } from '../CardModels'
 import { Bar } from 'react-chartjs-2'
 import * as React from 'react'
-import { CardView } from './CardView'
 
 export interface ManaCostSpreadProps {
     cardList: Card[]

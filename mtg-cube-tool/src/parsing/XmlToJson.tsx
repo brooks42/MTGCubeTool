@@ -1,5 +1,5 @@
 import * as XmlParser from 'fast-xml-parser'
-import { Card, CardList, CockatriceCardDatabase, CockatriceV1Card, v1CardToInternalCard } from '../CardModels'
+import { Card, CardList, CockatriceCardDatabase, v1CardToInternalCard } from '../CardModels'
 import {
     Input
 } from '@chakra-ui/react'
@@ -13,12 +13,10 @@ export function xmlToCardList(xml: string): CardList | undefined {
         parseAttributeValue: true,
     })
 
-    // console.log(JSON.stringify(jsonObject))
     return jsonObjectToCardList(jsonObject)
 }
 
 function jsonObjectToCardList(jsonObject: any): CardList | undefined {
-    console.log('loading CardList from json object')
 
     const v1Db = tryParsingV1CockatriceDBFileToCardList(jsonObject)
 
@@ -34,8 +32,6 @@ function jsonObjectToCardList(jsonObject: any): CardList | undefined {
 function tryParsingV1CockatriceDBFileToCardList(jsonObject: any): CardList | undefined {
 
     const cockatriceDb = jsonObject as CockatriceCardDatabase
-
-    console.log(`cast cockatriceDb: ${JSON.stringify(cockatriceDb)}`)
 
     if (cockatriceDb === undefined) {
         return undefined
@@ -54,8 +50,6 @@ function tryParsingV1CockatriceDBFileToCardList(jsonObject: any): CardList | und
     cockatriceDb.cockatrice_carddatabase.cards.card.forEach((v1Card) => {
         cardList.default.data[cockatriceDb.cockatrice_carddatabase.sets.set.name].cards.push(v1CardToInternalCard(v1Card))
     })
-
-    console.log(`cast cockatriceDb: ${JSON.stringify(cockatriceDb)}`)
 
     return cardList
 }
