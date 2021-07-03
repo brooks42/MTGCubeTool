@@ -37,7 +37,7 @@ export function CardSearchPage() {
 
         let kldSetCards = listOfAllCards.default.data['KHM'].cards
 
-        kldSetCards.map((card) => {
+        kldSetCards.forEach((card) => {
             cardNameDict.set(card.name, 1)
             cardsDict.set(card.name, card)
         })

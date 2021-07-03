@@ -5,7 +5,10 @@ import {
     Center,
     Text,
     HStack,
-    SimpleGrid
+    SimpleGrid,
+    Table,
+    Tr,
+    Td
 } from '@chakra-ui/react'
 import * as React from 'react'
 import { LoadSetButton } from './parsing/XmlToJson'
@@ -135,6 +138,7 @@ function SearchSegment({ cards, searchDescription }: SearchSegmentProps) {
 
             {collapsed ? <></> :
                 <Box m={3} borderRadius={30}>
+
                     <VStack>
                         <CardDataHeader cards={cards} />
                         <HStack w="100%" borderRadius={10} m={2}>
@@ -176,5 +180,53 @@ interface CardDataHeaderProps {
 }
 
 function CardDataHeader({ cards }: CardDataHeaderProps) {
-    return (<></>)
+
+    const [supertypes, setSupertypes] = React.useState(new Map<string, number>())
+
+    var loaded = false
+
+    React.useEffect(() => {
+        if (!loaded) {
+            calculateCountsOfAllSupertypes()
+        }
+    })
+
+    function calculateCountsOfAllSupertypes() {
+        supertypes.clear()
+
+        console.log('calculating counts')
+        cards.forEach((card) => {
+            card.supertypes.forEach((superType) => {
+                const value = supertypes.get(superType) ?? 0
+                console.log(`setting ${superType} to ${value + 1}`)
+                supertypes.set(superType, value + 1)
+            })
+        })
+
+        loaded = true
+        setSupertypes(supertypes)
+    }
+
+    function rowsForAllSupertypes() {
+        console.log(`supertypes ${JSON.stringify(supertypes)}`)
+        const trArray: JSX.Element[] = []
+
+        supertypes.forEach((value, key) => {
+            console.log(`getting ${key}: ${supertypes.get(key)}`)
+            trArray.push(<Td>{key}: {value}</Td>)
+        })
+
+        return trArray
+    }
+
+    return (<Table>
+        <Tr>
+            <Td>Total cards: {cards.length}</Td>
+            {/* <Td>Total manacost: {cards.map((card) => { return card.manaCost })}</Td> */}
+        </Tr>
+        <Tr>
+            <Td>type split: </Td>
+            {rowsForAllSupertypes()}
+        </Tr>
+    </Table>)
 }

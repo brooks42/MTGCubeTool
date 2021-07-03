@@ -3,6 +3,7 @@ export interface Card {
     colorIdentity: string[]
     colors: string[]
     manaCost: string
+    convertedManaCost: number
     name: string
     rarity: Rarity
     type: string
@@ -142,6 +143,20 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
         return pt !== undefined ? pt.split('/')[1] : ''
     }
 
+    function parseConvertedManaCost(manacost: string) {
+        if (manacost === undefined || manacost.length === 0) {
+            return 0
+        }
+
+        let cost = 0
+
+        // TODO: I'll do this when I'm not sleepy
+        // cockatrice mana symbols are usually like 1WW, but with dual colors they can be like 1W{W/G}
+        // let symbols = manacost.split('{')
+
+        return cost
+    }
+
     const card: Card = {
         name: v1Card.name,
         colorIdentity: v1Card.color.split(''),
@@ -154,6 +169,7 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
         rarity: parseRarity(v1Card.set),
         power: parsePower(v1Card.pt ?? ''),
         toughness: parseToughness(v1Card.pt ?? ''),
+        convertedManaCost: parseConvertedManaCost(v1Card.manacost),
         identifiers: {
             scryfallId: '',
             scryfallIllustrationId: '',
