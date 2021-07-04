@@ -11,6 +11,7 @@ import {
     Td
 } from '@chakra-ui/react'
 import * as React from 'react'
+import { SetInfoTable } from './data_views/SetInfoTable'
 import { LoadSetButton } from './parsing/XmlToJson'
 import { CardList, Card, CardColor } from './CardModels'
 import { CardView } from './data_views/CardView'
@@ -224,5 +225,6 @@ function CardDataHeader({ cards }: CardDataHeaderProps) {
             <Td>type split: </Td>
             {rowsForAllSupertypes()}
         </Tr>
+        <Tr><Td><SetInfoTable title="." cards={cards} /></Td></Tr>
     </Table>)
 }
