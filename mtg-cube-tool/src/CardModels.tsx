@@ -1,3 +1,4 @@
+import { stringify } from "querystring"
 
 export interface Card {
     colorIdentity: string[]
@@ -148,11 +149,56 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
             return 0
         }
 
+        // happens with JSON if the manacost is just a number, thanks javascript
+        if (typeof manacost === 'number') {
+            return manacost
+        }
+
+        console.log(`parse mana cost ${manacost} ${typeof manacost}`)
+
         let cost = 0
 
         // TODO: I'll do this when I'm not sleepy
         // cockatrice mana symbols are usually like 1WW, but with dual colors they can be like 1W{W/G}
         // let symbols = manacost.split('{')
+
+        // mana costs are always of the form [number or blank][phyrexian mana | mana symbols]
+        // hybrid mana doesn't have to be at the end of the cost like I thought so 
+        // prune the number, add that to the total cost
+        const splits = manacost.split(/[^0-9]/)
+        console.log(`numbers split off to ${JSON.stringify(splits)}`)
+
+        if (splits.length >= 1 && splits[0] !== '') {
+            cost += Number(splits[0])
+            manacost = manacost.replace(splits[0], '')
+        }
+
+        // prune all hybrid mana or phyrexian mana {C/P} for phyrexian, add the number of symbols to the cost
+        // this turns a cost like G{G/U}U into [G, {G/U}, U]
+        const separateSymbols = manacost.replace('{', ' {').replace('}', '} ').split(' ')
+
+        separateSymbols.filter((value) => {
+            return value !== ''
+        })
+
+        console.log(`separate symbols ${JSON.stringify(separateSymbols)}`)
+
+        separateSymbols.forEach((symbol) => {
+            if (symbol.startsWith('{')) {
+                if (symbol.startsWith('{2/')) {
+                    // this is a 2/C symbol and adds 2 to the cost
+                    console.log('found a {2/C}, adds 2')
+                    cost += 2
+                } else {
+                    cost += 1
+                }
+            } else {
+                // this value is some number of mana symbols, which cost 1 each
+                cost += symbol.length
+            }
+        })
+
+        console.log(`cost was ${cost}`)
 
         return cost
     }

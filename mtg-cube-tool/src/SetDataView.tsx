@@ -194,11 +194,9 @@ function CardDataHeader({ cards }: CardDataHeaderProps) {
     function calculateCountsOfAllSupertypes() {
         supertypes.clear()
 
-        console.log('calculating counts')
         cards.forEach((card) => {
             card.supertypes.forEach((superType) => {
                 const value = supertypes.get(superType) ?? 0
-                console.log(`setting ${superType} to ${value + 1}`)
                 supertypes.set(superType, value + 1)
             })
         })
@@ -208,11 +206,9 @@ function CardDataHeader({ cards }: CardDataHeaderProps) {
     }
 
     function rowsForAllSupertypes() {
-        console.log(`supertypes ${JSON.stringify(supertypes)}`)
         const trArray: JSX.Element[] = []
 
         supertypes.forEach((value, key) => {
-            console.log(`getting ${key}: ${supertypes.get(key)}`)
             trArray.push(<Td>{key}: {value}</Td>)
         })
 
@@ -222,7 +218,7 @@ function CardDataHeader({ cards }: CardDataHeaderProps) {
     return (<Table>
         <Tr>
             <Td>Total cards: {cards.length}</Td>
-            {/* <Td>Total manacost: {cards.map((card) => { return card.manaCost })}</Td> */}
+            <Td>Total manacost: {cards.map((card) => { return card.convertedManaCost }).reduce(function (a, b) { return a + b })}</Td>
         </Tr>
         <Tr>
             <Td>type split: </Td>
