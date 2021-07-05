@@ -150,6 +150,9 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
     }
 
     function parseConvertedManaCost(manacost: string) {
+
+        // TODO: improve logging
+
         if (manacost === undefined || manacost.length === 0) {
             return 0
         }
@@ -159,19 +162,15 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
             return manacost
         }
 
-        console.log(`parse mana cost ${manacost} ${typeof manacost}`)
+        // console.log(`parse mana cost ${manacost} ${typeof manacost}`)
 
         let cost = 0
-
-        // TODO: I'll do this when I'm not sleepy
-        // cockatrice mana symbols are usually like 1WW, but with dual colors they can be like 1W{W/G}
-        // let symbols = manacost.split('{')
 
         // mana costs are always of the form [number or blank][phyrexian mana | mana symbols]
         // hybrid mana doesn't have to be at the end of the cost like I thought so 
         // prune the number, add that to the total cost
         const splits = manacost.split(/[^0-9]/)
-        console.log(`numbers split off to ${JSON.stringify(splits)}`)
+        // console.log(`numbers split off to ${JSON.stringify(splits)}`)
 
         if (splits.length >= 1 && splits[0] !== '') {
             cost += Number(splits[0])
@@ -186,7 +185,7 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
             return value !== ''
         })
 
-        console.log(`separate symbols ${JSON.stringify(separateSymbols)}`)
+        // console.log(`separate symbols ${JSON.stringify(separateSymbols)}`)
 
         separateSymbols.forEach((symbol) => {
             if (symbol.startsWith('{')) {
@@ -203,7 +202,7 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
             }
         })
 
-        console.log(`cost was ${cost}`)
+        // console.log(`cost was ${cost}`)
 
         return cost
     }

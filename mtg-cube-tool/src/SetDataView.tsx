@@ -8,7 +8,8 @@ import {
     SimpleGrid,
     Table,
     Tr,
-    Td
+    Td,
+    Checkbox
 } from '@chakra-ui/react'
 import * as React from 'react'
 import { SetInfoTable } from './data_views/SetInfoTable'
@@ -41,7 +42,7 @@ const defaultSearchTerms: SearchTerms[] = [{
 export function SetDatasView() {
     const [cardList, setCardList] = React.useState<CardList | undefined>()
     const [searchTermList, setSearchTermList] = React.useState<SearchTerms[]>(defaultSearchTerms)
-    const [excludeDfcs, setExcluseDfcs] = React.useState(true)
+    const [excludeDfcs, setExcludeDfcs] = React.useState(true)
 
     function searchViewsForEachTerm() {
         if (cardList === undefined) {
@@ -61,7 +62,7 @@ export function SetDatasView() {
 
         for (let setName in cardList.default.data) {
             cards.push(...cardList.default.data[setName].cards.filter((card) => {
-                return (excludeDfcs && !(card.side === CardSide.back))
+                return (excludeDfcs ? !(card.side === CardSide.back) : true)
             }))
         }
 
@@ -92,6 +93,9 @@ export function SetDatasView() {
                         </Text>
                         <HStack width="100%">
                             <LoadSetButton completion={setCardList} />
+                        </HStack>
+                        <HStack>
+                            <Checkbox isChecked={excludeDfcs} onChange={(e) => setExcludeDfcs(e.target.checked)}>Exclude DFCs</Checkbox>
                         </HStack>
                     </VStack>
                 </Box>
@@ -219,10 +223,15 @@ function CardDataHeader({ cards }: CardDataHeaderProps) {
         return trArray
     }
 
+    function calculateTotalManaCost() {
+        console.log(`cards count is ${cards.length}`)
+        return cards.map((card) => { return card.convertedManaCost }).reduce(function (a, b) { return a + b })
+    }
+
     return (<Table>
         <Tr>
             <Td>Total cards: {cards.length}</Td>
-            <Td>Total manacost: {cards.map((card) => { return card.convertedManaCost }).reduce(function (a, b) { return a + b })}</Td>
+            <Td>Total manacost: {calculateTotalManaCost()}</Td>
         </Tr>
         <Tr>
             <Td>type split: </Td>
