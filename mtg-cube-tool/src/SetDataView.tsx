@@ -13,7 +13,7 @@ import {
 import * as React from 'react'
 import { SetInfoTable } from './data_views/SetInfoTable'
 import { LoadSetButton } from './parsing/XmlToJson'
-import { CardList, Card, CardColor } from './CardModels'
+import { CardList, Card, CardColor, CardSide } from './CardModels'
 import { CardView } from './data_views/CardView'
 import { ChevronUp, ChevronDown } from 'heroicons-react'
 import { isEqual } from 'lodash'
@@ -41,6 +41,7 @@ const defaultSearchTerms: SearchTerms[] = [{
 export function SetDatasView() {
     const [cardList, setCardList] = React.useState<CardList | undefined>()
     const [searchTermList, setSearchTermList] = React.useState<SearchTerms[]>(defaultSearchTerms)
+    const [excludeDfcs, setExcluseDfcs] = React.useState(true)
 
     function searchViewsForEachTerm() {
         if (cardList === undefined) {
@@ -59,7 +60,9 @@ export function SetDatasView() {
         let cards: Card[] = []
 
         for (let setName in cardList.default.data) {
-            cards.push(...cardList.default.data[setName].cards)
+            cards.push(...cardList.default.data[setName].cards.filter((card) => {
+                return (excludeDfcs && !(card.side === CardSide.back))
+            }))
         }
 
         // if no search terms are defined, return every card in the set

@@ -1,4 +1,3 @@
-import { stringify } from "querystring"
 
 export interface Card {
     colorIdentity: string[]
@@ -18,6 +17,7 @@ export interface Card {
         scryfallIllustrationId: string
         scryfallOracleId: string
     }
+    side: CardSide
 }
 
 // version 1 cards are ones that don't use props, like from the SW TCG or this example:
@@ -44,6 +44,11 @@ export interface NoPropsCard {
     text: string
     types: string[]
     supertypes: string[]
+}
+
+export enum CardSide {
+    front = 'a',
+    back = 'b'
 }
 
 export type DFCSide = 'front' | 'back'
@@ -203,6 +208,10 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
         return cost
     }
 
+    function parseDfcSide(side: DFCSide) {
+        return side === 'back' ? CardSide.back : CardSide.front
+    }
+
     const card: Card = {
         name: v1Card.name,
         colorIdentity: v1Card.color.split(''),
@@ -216,6 +225,7 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
         power: parsePower(v1Card.pt ?? ''),
         toughness: parseToughness(v1Card.pt ?? ''),
         convertedManaCost: parseConvertedManaCost(v1Card.manacost),
+        side: parseDfcSide(v1Card.side),
         identifiers: {
             scryfallId: '',
             scryfallIllustrationId: '',

@@ -1,11 +1,4 @@
 import {
-    VStack,
-    Box,
-    Button,
-    Center,
-    Text,
-    HStack,
-    SimpleGrid,
     Table,
     Tr,
     Td,
@@ -13,7 +6,7 @@ import {
     Th
 } from '@chakra-ui/react'
 import * as React from 'react'
-import { CardList, Card, CardColor } from '../CardModels'
+import { Card } from '../CardModels'
 
 interface SetInfoTableProps {
     title: string
@@ -37,7 +30,7 @@ export function SetInfoTable({ title, cards }: SetInfoTableProps) {
     function creatureCardsForCost(cost: number) {
         return cards.filter((card) => {
             if (card.supertypes.includes('Creature') || card.supertypes.includes('Pokémon')) {
-                return card.convertedManaCost == cost || (cost === 6 && card.convertedManaCost >= 6)
+                return card.convertedManaCost === cost || (cost === 6 && card.convertedManaCost >= 6)
             }
             return false
         }).length
@@ -46,7 +39,7 @@ export function SetInfoTable({ title, cards }: SetInfoTableProps) {
     function nonCreatureCardsForCost(cost: number) {
         return cards.filter((card) => {
             if (!card.supertypes.includes('Creature') && !card.supertypes.includes('Pokémon')) {
-                return card.convertedManaCost == cost || (cost === 6 && card.convertedManaCost >= 6)
+                return card.convertedManaCost === cost || (cost === 6 && card.convertedManaCost >= 6)
             }
             return false
         }).length
