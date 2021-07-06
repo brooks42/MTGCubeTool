@@ -1,7 +1,7 @@
 
 export interface Card {
-    colorIdentity: string[]
-    colors: string[]
+    colorIdentity: CardColor[]
+    colors: CardColor[]
     manaCost: string
     convertedManaCost: number
     name: string
@@ -36,7 +36,7 @@ export interface Card {
         </card>*/
 export interface NoPropsCard {
     name: string,
-    color: string,
+    color: CardColor,
     rarity: Rarity
     manacost: string
     power: string
@@ -97,7 +97,7 @@ export interface CockatriceV1Card {
 
     name: string
     set: string
-    color: string
+    color: CardColor
     manacost: string
     type: string
     pt: string | undefined
@@ -213,13 +213,13 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
 
     const card: Card = {
         name: v1Card.name,
-        colorIdentity: v1Card.color.split(''),
+        colorIdentity: v1Card.color.split('') as CardColor[],
         manaCost: v1Card.manacost,
         text: v1Card.text,
         type: v1Card.type,
         supertypes: parseSupertypes(v1Card.type),
         types: parseSubtypes(v1Card.type),
-        colors: v1Card.color.split(''),
+        colors: v1Card.color.split('') as CardColor[],
         rarity: parseRarity(v1Card.set),
         power: parsePower(v1Card.pt ?? ''),
         toughness: parseToughness(v1Card.pt ?? ''),

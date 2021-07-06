@@ -9,15 +9,17 @@ import {
     Table,
     Tr,
     Td,
-    Checkbox
+    Checkbox,
+    Tooltip
 } from '@chakra-ui/react'
 import * as React from 'react'
 import { SetInfoTable } from './data_views/SetInfoTable'
 import { LoadSetButton } from './parsing/XmlToJson'
 import { CardList, Card, CardColor, CardSide } from './CardModels'
 import { CardView } from './data_views/CardView'
-import { ChevronUp, ChevronDown } from 'heroicons-react'
+import { ChevronUp, ChevronDown, QuestionMarkCircleOutline } from 'heroicons-react'
 import { isEqual } from 'lodash'
+import { ManaCostSpread } from './data_views/ManaCostSpread'
 
 interface SearchTerms {
     colors?: CardColor[]
@@ -43,6 +45,7 @@ export function SetDatasView() {
     const [cardList, setCardList] = React.useState<CardList | undefined>()
     const [searchTermList, setSearchTermList] = React.useState<SearchTerms[]>(defaultSearchTerms)
     const [excludeDfcs, setExcludeDfcs] = React.useState(true)
+    const [colorExclusive, setColorExclusive] = React.useState(true)
 
     function searchViewsForEachTerm() {
         if (cardList === undefined) {
@@ -56,13 +59,22 @@ export function SetDatasView() {
         })
     }
 
+    function shouldIncludeCardInGlobalSearch(card: Card) {
+
+        if (excludeDfcs && card.side === CardSide.back) {
+            return false
+        }
+
+        return true
+    }
+
     function cardListApplyingSearchTerms(searchTerms: SearchTerms | undefined, cardList: CardList): Card[] {
 
         let cards: Card[] = []
 
         for (let setName in cardList.default.data) {
             cards.push(...cardList.default.data[setName].cards.filter((card) => {
-                return (excludeDfcs ? !(card.side === CardSide.back) : true)
+                return shouldIncludeCardInGlobalSearch(card)
             }))
         }
 
@@ -76,7 +88,11 @@ export function SetDatasView() {
             let colorSearch = searchTerms.colors
 
             cards = cards.filter((card) => {
-                return isEqual(card.colors, colorSearch)
+                if (colorExclusive) {
+                    return isEqual(card.colors, colorSearch)
+                } else {
+                    return card.colors.filter(value => colorSearch.includes(value)).length > 0
+                }
             })
         }
 
@@ -95,11 +111,24 @@ export function SetDatasView() {
                             <LoadSetButton completion={setCardList} />
                         </HStack>
                         <HStack>
-                            <Checkbox isChecked={excludeDfcs} onChange={(e) => setExcludeDfcs(e.target.checked)}>Exclude DFCs</Checkbox>
+                            <VStack><Checkbox isChecked={excludeDfcs} onChange={(e) => setExcludeDfcs(e.target.checked)}>Exclude DFCs</Checkbox></VStack>
+                            <VStack>
+                                <HStack>
+                                    <Checkbox isChecked={colorExclusive} onChange={(e) => setColorExclusive(e.target.checked)}>Nonexclusive Colors</Checkbox>
+                                    <Tooltip label="If checked, searches for colored cards will get all cards that have that color in the cost, not just monocolor." aria-label="A tooltip">
+                                        <QuestionMarkCircleOutline />
+                                    </Tooltip>
+                                </HStack>
+                            </VStack>
                         </HStack>
                     </VStack>
                 </Box>
             </Center>
+            {cardList !== undefined && <Center>
+                <Box bgColor="gray.500" p={4} m={4}>
+                    <SetInfoTable cards={cardListApplyingSearchTerms(undefined, cardList)} title="Set overview" />
+                </Box>
+            </Center>}
             {searchViewsForEachTerm()}
         </>)
 }
