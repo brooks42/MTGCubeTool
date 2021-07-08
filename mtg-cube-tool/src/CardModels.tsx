@@ -20,6 +20,37 @@ export interface Card {
     side: CardSide
 }
 
+export function cardColorTypeForCard(card: Card): CardColorType {
+    if (card.colors.length === 0) {
+        return 'colorless'
+    }
+
+    if (card.colors.length === 1) {
+        return 'monocolor'
+    }
+
+    // this is where it gets a little complicated
+    // we have to introspect the colors in the mana cost
+    // similar to how we do the mana value introspection
+    // 
+    // it can either have
+    // - no { in which case it's multicolor
+    // - {, but the bracket(s) are only {2 which is also multicolor
+    // - or it has { and the { are colors
+
+    // easy way out -- if it includes a hybrid mana symbol and doesn't cost phyrexian mana, it's a hybrid
+    if ((card.manaCost.includes('{R') ||
+        card.manaCost.includes('{W') ||
+        card.manaCost.includes('{U') ||
+        card.manaCost.includes('{B') ||
+        card.manaCost.includes('{G')) &&
+        !card.manaCost.includes('/P}')) {
+        return 'hybrid'
+    }
+
+    return 'multicolor'
+}
+
 // version 1 cards are ones that don't use props, like from the SW TCG or this example:
 /*		<card>
             <name>Bulbasaur</name>
@@ -56,6 +87,8 @@ export type DFCSide = 'front' | 'back'
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'mythic'
 
 export type CardColor = 'W' | 'U' | 'R' | 'B' | 'G'
+
+export type CardColorType = 'multicolor' | 'hybrid' | 'monocolor' | 'colorless'
 
 // got these color codes from https://i.imgur.com/dMjPOq0.png
 export enum CardColorHexes {

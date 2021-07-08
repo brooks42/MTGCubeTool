@@ -15,7 +15,7 @@ import {
 import * as React from 'react'
 import { SetInfoTable } from './data_views/SetInfoTable'
 import { LoadSetButton } from './parsing/XmlToJson'
-import { CardList, Card, CardColor, CardSide } from './CardModels'
+import { CardList, Card, CardColor, CardSide, CardColorType, cardColorTypeForCard } from './CardModels'
 import { CardView } from './data_views/CardView'
 import { ChevronUp, ChevronDown, QuestionMarkCircleOutline } from 'heroicons-react'
 import { isEqual } from 'lodash'
@@ -23,6 +23,8 @@ import { v4 as uuidv4 } from 'uuid'
 
 interface SearchTerms {
     colors?: CardColor[]
+    cardColorType?: CardColorType
+    cardSupertype?: string // type like "Land", "Creature" etc
 }
 
 const defaultSearchTerms: SearchTerms[] = [{
@@ -39,6 +41,18 @@ const defaultSearchTerms: SearchTerms[] = [{
 },
 {
     colors: ['G']
+},
+{
+    cardColorType: 'colorless'
+},
+{
+    cardColorType: 'hybrid'
+},
+{
+    cardColorType: 'multicolor'
+},
+{
+    cardSupertype: 'land'
 }]
 
 export function SetDatasView() {
@@ -102,6 +116,23 @@ export function SetDatasView() {
                 } else {
                     return card.colors.filter(value => colorSearch.includes(value)).length > 0
                 }
+            })
+        }
+
+        // next prune cards that are the selected color type
+        if (searchTerms.cardColorType) {
+            let colorType = searchTerms.cardColorType
+
+            cards = cards.filter((card) => {
+                return cardColorTypeForCard(card) === colorType
+            })
+        }
+
+        if (searchTerms.cardSupertype) {
+            let superType = searchTerms.cardSupertype
+
+            cards = cards.filter((card) => {
+                return card.supertypes.map((value) => value.toLowerCase()).includes(superType.toLowerCase())
             })
         }
 
