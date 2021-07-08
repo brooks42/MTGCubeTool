@@ -19,8 +19,8 @@ interface SearchTerms {
 
 export function ComparisonView() {
     const [leftCardList, setLeftCardList] = React.useState<CardList | undefined>()
-    const [rightCardList, setRightCardList] = React.useState<CardList | undefined>()
-    const [searchTerms, setSearchTerms] = React.useState<SearchTerms | undefined>()
+    // const [rightCardList, setRightCardList] = React.useState<CardList | undefined>()
+    const [searchTerms] = React.useState<SearchTerms | undefined>()
 
     function cardListApplyingSearchTerms(searchTerms: SearchTerms | undefined, cardList: CardList): Card[] {
 
@@ -40,7 +40,7 @@ export function ComparisonView() {
     }
 
     function viewsForCardNames() {
-        var objs = new Array()
+        var objs: JSX.Element[] = []
 
         if (leftCardList) {
             cardListApplyingSearchTerms(searchTerms, leftCardList).forEach((card) => {

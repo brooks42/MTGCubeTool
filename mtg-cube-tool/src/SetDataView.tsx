@@ -85,25 +85,6 @@ export function SetDatasView() {
             }).filter((card) => {
                 return card !== undefined
             }) as Card[]
-
-            // cardList.default.data[setName].cards.forEach((card) => {
-            //     if (shouldIncludeCardInGlobalSearch(card)) {
-            //     if (card.rarity === 'common') {
-            //         cards.push(card)
-            //         cards.push(card)
-            //         return
-            //     }
-            //     cards.push(card)
-            //     }
-            // })
-
-            // twice for commons, doing it this way cuz I'm lazy
-            // cards.push(...cardList.default.data[setName].cards.filter((card) => {
-            //     if (card.rarity === 'common') {
-            //         console.log(`adding a second copy of ${card.name}`)
-            //     }
-            //     return shouldIncludeCardInGlobalSearch(card) && card.rarity === 'common'
-            // }))
         }
 
         // if no search terms are defined, return every card in the set

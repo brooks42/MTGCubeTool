@@ -48,16 +48,16 @@ export function CardSearchPage() {
     function viewsForCardNames() {
         var objs: JSX.Element[] = []
 
-        cardNameDict.forEach((_, key) => {
-            if (searchString !== undefined && searchString !== "") {
+        if (searchString !== undefined && searchString !== "") {
+            cardNameDict.forEach((_, key) => {
                 if (key.toLowerCase().includes(searchString)) {
                     let card = cardsDict.get(key)
                     if (card) {
                         objs.push(<CardView card={card} key={card.name} />)
                     }
                 }
-            }
-        })
+            })
+        }
 
         console.log(`viewsForCardNames() returning ${objs.length} of ${cardsDict.size}`)
         return objs
