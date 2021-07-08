@@ -24,8 +24,6 @@ export function CardSearchPage() {
     const handleChange = (event: any) => setSearchString(event.target.value)
 
     React.useEffect(() => {
-        console.log(`searchString: ${searchString}`)
-
         if (!loaded) {
             loadAllCards()
         }
@@ -48,7 +46,7 @@ export function CardSearchPage() {
     }
 
     function viewsForCardNames() {
-        var objs = new Array()
+        var objs: JSX.Element[] = []
 
         cardNameDict.forEach((_, key) => {
             if (searchString !== undefined && searchString !== "") {
@@ -67,7 +65,7 @@ export function CardSearchPage() {
 
     function currentlySelectedCards() {
 
-        var objs = new Array()
+        var objs: Card[] = []
 
         cardNameDict.forEach((_, key) => {
             if (searchString !== undefined && searchString !== "") {

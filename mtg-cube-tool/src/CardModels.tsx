@@ -96,13 +96,17 @@ export interface CockatriceCardDatabase {
 export interface CockatriceV1Card {
 
     name: string
-    set: string
+    set: V1SetCode
     color: CardColor
     manacost: string
     type: string
     pt: string | undefined
     side: DFCSide
     text: string
+}
+
+interface V1SetCode {
+    '@_rarity': Rarity
 }
 
 // returns a `Card` object from the passed v1 card 
@@ -137,8 +141,8 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
     }
 
     // no clue how to do this yet
-    function parseRarity(set: string): Rarity {
-        return 'common'
+    function parseRarity(set: V1SetCode): Rarity {
+        return set["@_rarity"] as Rarity
     }
 
     function parsePower(pt: string | undefined) {
@@ -213,13 +217,13 @@ export function v1CardToInternalCard(v1Card: CockatriceV1Card): Card {
 
     const card: Card = {
         name: v1Card.name,
-        colorIdentity: v1Card.color.split('') as CardColor[],
+        colorIdentity: v1Card.color ? v1Card.color.split('') as CardColor[] : [], // this isn't technically correct but it's fine for now
         manaCost: v1Card.manacost,
         text: v1Card.text,
         type: v1Card.type,
         supertypes: parseSupertypes(v1Card.type),
         types: parseSubtypes(v1Card.type),
-        colors: v1Card.color.split('') as CardColor[],
+        colors: v1Card.color ? v1Card.color.split('') as CardColor[] : [],
         rarity: parseRarity(v1Card.set),
         power: parsePower(v1Card.pt ?? ''),
         toughness: parseToughness(v1Card.pt ?? ''),

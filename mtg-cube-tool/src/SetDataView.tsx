@@ -19,7 +19,7 @@ import { CardList, Card, CardColor, CardSide } from './CardModels'
 import { CardView } from './data_views/CardView'
 import { ChevronUp, ChevronDown, QuestionMarkCircleOutline } from 'heroicons-react'
 import { isEqual } from 'lodash'
-import { ManaCostSpread } from './data_views/ManaCostSpread'
+import { v4 as uuidv4 } from 'uuid'
 
 interface SearchTerms {
     colors?: CardColor[]
@@ -43,7 +43,7 @@ const defaultSearchTerms: SearchTerms[] = [{
 
 export function SetDatasView() {
     const [cardList, setCardList] = React.useState<CardList | undefined>()
-    const [searchTermList, setSearchTermList] = React.useState<SearchTerms[]>(defaultSearchTerms)
+    const [searchTermList] = React.useState<SearchTerms[]>(defaultSearchTerms)
     const [excludeDfcs, setExcludeDfcs] = React.useState(true)
     const [colorExclusive, setColorExclusive] = React.useState(true)
 
@@ -73,9 +73,37 @@ export function SetDatasView() {
         let cards: Card[] = []
 
         for (let setName in cardList.default.data) {
-            cards.push(...cardList.default.data[setName].cards.filter((card) => {
-                return shouldIncludeCardInGlobalSearch(card)
-            }))
+
+            cards = cardList.default.data[setName].cards.flatMap((card) => {
+                if (shouldIncludeCardInGlobalSearch(card)) {
+                    if (card.rarity === 'common') {
+                        return [card, card]
+                    }
+                    return card
+                }
+                return undefined
+            }).filter((card) => {
+                return card !== undefined
+            }) as Card[]
+
+            // cardList.default.data[setName].cards.forEach((card) => {
+            //     if (shouldIncludeCardInGlobalSearch(card)) {
+            //     if (card.rarity === 'common') {
+            //         cards.push(card)
+            //         cards.push(card)
+            //         return
+            //     }
+            //     cards.push(card)
+            //     }
+            // })
+
+            // twice for commons, doing it this way cuz I'm lazy
+            // cards.push(...cardList.default.data[setName].cards.filter((card) => {
+            //     if (card.rarity === 'common') {
+            //         console.log(`adding a second copy of ${card.name}`)
+            //     }
+            //     return shouldIncludeCardInGlobalSearch(card) && card.rarity === 'common'
+            // }))
         }
 
         // if no search terms are defined, return every card in the set
@@ -203,7 +231,7 @@ function CardSearchResultsGrid({ cards }: CardSearchResultsGridProps) {
         }
 
         return cards.map((card) => {
-            return <CardView card={card} key={card.name} />
+            return <CardView card={card} key={`${card.name}+${uuidv4()}`} />
         })
     }
 
@@ -254,7 +282,7 @@ function CardDataHeader({ cards }: CardDataHeaderProps) {
 
     function calculateTotalManaCost() {
         console.log(`cards count is ${cards.length}`)
-        return cards.map((card) => { return card.convertedManaCost }).reduce(function (a, b) { return a + b })
+        return cards.map((card) => { return card.convertedManaCost }).reduce(function (a, b) { return a + b }, 0)
     }
 
     return (<Table>
