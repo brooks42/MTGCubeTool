@@ -10,3 +10,5 @@
 ### Add functionality from
 
 http://yeefbear.com/as-fan/#cube
+
+### Logging
