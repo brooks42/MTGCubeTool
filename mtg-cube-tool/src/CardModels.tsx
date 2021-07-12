@@ -39,11 +39,12 @@ export function cardColorTypeForCard(card: Card): CardColorType {
     // - or it has { and the { are colors
 
     // easy way out -- if it includes a hybrid mana symbol and doesn't cost phyrexian mana, it's a hybrid
-    if ((card.manaCost.includes('{R') ||
-        card.manaCost.includes('{W') ||
-        card.manaCost.includes('{U') ||
-        card.manaCost.includes('{B') ||
-        card.manaCost.includes('{G')) &&
+    if (card.manaCost &&
+        (card.manaCost.includes('{R') ||
+            card.manaCost.includes('{W') ||
+            card.manaCost.includes('{U') ||
+            card.manaCost.includes('{B') ||
+            card.manaCost.includes('{G')) &&
         !card.manaCost.includes('/P}')) {
         return 'hybrid'
     }
