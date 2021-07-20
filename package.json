@@ -2,6 +2,9 @@
   "name": "mtg-cube-tool",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "15.x"
+  },
   "dependencies": {
     "@chakra-ui/react": "^1.6.4",
     "@emotion/react": "^11.4.0",
