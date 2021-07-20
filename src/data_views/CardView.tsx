@@ -1,11 +1,11 @@
 
-import { AspectRatioBox } from '@chakra-ui/core'
 import {
     VStack,
     Box,
     Text,
     HStack,
     Spacer,
+    AspectRatio
 } from '@chakra-ui/react'
 import * as React from 'react'
 import { Card } from '../CardModels'
@@ -55,7 +55,7 @@ export function CardView(props: CardViewProps) {
     }
 
     return (
-        <AspectRatioBox ratio={2.5 / 3.5} minW={25} minH={100} margin={3}>
+        <AspectRatio ratio={2.5 / 3.5} minW={25} minH={100} margin={3}>
             <Box bgColor={cardColorsToBackgroundColor()} borderRadius={2}>
                 <VStack p={3} h="100%">
                     <HStack bgColor="gray.100" w="100%" p={3} borderRadius="md">
@@ -70,6 +70,6 @@ export function CardView(props: CardViewProps) {
                     {powerToughnessBox()}
                 </VStack>
             </Box>
-        </AspectRatioBox>
+        </AspectRatio>
     )
 }
