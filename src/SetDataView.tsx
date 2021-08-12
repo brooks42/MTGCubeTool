@@ -258,34 +258,24 @@ interface CardDataHeaderProps {
 
 function CardDataHeader({ cards }: CardDataHeaderProps) {
 
-    const [supertypes, setSupertypes] = React.useState(new Map<string, number>())
-
-    var loaded = false
-
-    React.useEffect(() => {
-        if (!loaded) {
-            calculateCountsOfAllSupertypes()
-        }
-    })
-
     function calculateCountsOfAllSupertypes() {
-        supertypes.clear()
+
+        const superTypesMap = new Map<string, number>()
 
         cards.forEach((card) => {
             card.supertypes.forEach((superType) => {
-                const value = supertypes.get(superType) ?? 0
-                supertypes.set(superType, value + 1)
+                const value = superTypesMap.get(superType) ?? 0
+                superTypesMap.set(superType, value + 1)
             })
         })
 
-        loaded = true
-        setSupertypes(supertypes)
+        return superTypesMap
     }
 
     function rowsForAllSupertypes() {
         const trArray: JSX.Element[] = []
 
-        supertypes.forEach((value, key) => {
+        calculateCountsOfAllSupertypes().forEach((value, key) => {
             trArray.push(<Td>{key}: {value}</Td>)
         })
 
