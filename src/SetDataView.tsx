@@ -60,6 +60,8 @@ export function SetDatasView() {
     const [searchTermList] = React.useState<SearchTerms[]>(defaultSearchTerms)
     const [excludeDfcs, setExcludeDfcs] = React.useState(true)
     const [colorExclusive, setColorExclusive] = React.useState(true)
+    const [excludeLands, setExcludeLands] = React.useState(true)
+    const [excludeTokens, setExcludeTokens] = React.useState(true)
 
     function searchViewsForEachTerm() {
         if (cardList === undefined) {
@@ -76,6 +78,14 @@ export function SetDatasView() {
     function shouldIncludeCardInGlobalSearch(card: Card) {
 
         if (excludeDfcs && card.side === CardSide.back) {
+            return false
+        }
+
+        if (excludeLands && card.supertypes.includes('Land')) {
+            return false
+        }
+
+        if (excludeTokens && card.supertypes.includes('Token')) {
             return false
         }
 
@@ -160,6 +170,8 @@ export function SetDatasView() {
                                     </Tooltip>
                                 </HStack>
                             </VStack>
+                            <VStack><Checkbox isChecked={excludeLands} onChange={(e) => setExcludeLands(e.target.checked)}>Exclude Lands</Checkbox></VStack>
+                            <VStack><Checkbox isChecked={excludeTokens} onChange={(e) => setExcludeTokens(e.target.checked)}>Exclude Tokens</Checkbox></VStack>
                         </HStack>
                     </VStack>
                 </Box>
