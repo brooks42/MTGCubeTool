@@ -77,6 +77,11 @@ export function SetDatasView() {
 
     function shouldIncludeCardInGlobalSearch(card: Card) {
 
+        // never show basic lands
+        if (card.supertypes.includes('Basic') && card.supertypes.includes('Land')) {
+            return false
+        }
+
         if (excludeDfcs && card.side === CardSide.back) {
             return false
         }
@@ -294,15 +299,19 @@ function CardDataHeader({ cards }: CardDataHeaderProps) {
         return trArray
     }
 
-    function calculateTotalManaCost() {
-        console.log(`cards count is ${cards.length}`)
+    function calculateTotalManaCost(): number {
         return cards.map((card) => { return card.convertedManaCost }).reduce(function (a, b) { return a + b }, 0)
+    }
+
+    function calculateAverageManaCost(): number {
+        return calculateTotalManaCost() / cards.length
     }
 
     return (<Table>
         <Tr>
             <Td>Total cards: {cards.length}</Td>
             <Td>Total manacost: {calculateTotalManaCost()}</Td>
+            <Td>Average manacost: {calculateAverageManaCost().toFixed(2)}</Td>
         </Tr>
         <Tr>
             <Td>type split: </Td>
